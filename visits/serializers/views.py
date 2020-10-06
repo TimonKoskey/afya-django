@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from django.db.models import Q
 
 from rest_framework.generics import (
-	RetrieveUpdateDestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
+	ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 )
 
 from patients.models import patient
@@ -14,8 +14,8 @@ from patients.models import patient
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
     treatmentModel, remarksModel, merged )
 from .serializers import (
-	PaymentSerializer, VitalsEntrySerializer, VisitsListSerializer, RetrieveVisitSerializer, ComplaintsSerializer
-)
+	PaymentSerializer, VitalsEntrySerializer, VisitsListSerializer, RetrieveVisitSerializer, ComplaintsSerializer, PhysicalExamSerializer,
+	ComorbiditiesSerializer, InvestigationsSerializer, DiagnosisSerializer, TreatmentSerializer, RemarksSerializer )
 
 class CreateNewVisitAPIView(APIView):
 
@@ -129,10 +129,193 @@ class RetrieveUpdateDeleteSessionPaymentAPIView(RetrieveUpdateDestroyAPIView):
 	queryset = paymentModel.objects.all()
 	serializer_class = PaymentSerializer
 
-class CreateSessionComplaintsAPIView(CreateAPIView):
+class CreateSessionComplaintsAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = ComplaintsSerializer(data=data)
+
+		if serializer.is_valid():
+			complaintsObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			complaintsObj.visit = visitObj
+			complaintsObj.save()
+			return Response(ComplaintsSerializer(complaintsObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 	queryset = complaintsModel.objects.all()
-	serializer_class = ComplaintsSerializer
+
+class GetSessionComplaintsAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		complaintsObj = get_object_or_404(complaintsModel, visit=visitObj)
+		return Response(ComplaintsSerializer(complaintsObj).data, status=status.HTTP_201_CREATED)
 
 class RetrieveUpdateDeleteSessionComplaintsAPIView(RetrieveUpdateDestroyAPIView):
 	queryset = complaintsModel.objects.all()
 	serializer_class = ComplaintsSerializer
+
+class CreateSessionPhycExamsAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = PhysicalExamSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			notesObj.visit = visitObj
+			notesObj.save()
+			return Response(PhysicalExamSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionPhycExamsAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		notesObj = get_object_or_404(physicalExamsModel, visit=visitObj)
+		return Response(PhysicalExamSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+
+class RetrieveUpdateDeleteSessionPhycExamsAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = physicalExamsModel.objects.all()
+	serializer_class = PhysicalExamSerializer
+
+class CreateSessionComorbiditiesAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = ComorbiditiesSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			notesObj.visit = visitObj
+			notesObj.save()
+			return Response(ComorbiditiesSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionComorbiditiesAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		notesObj = get_object_or_404(comorbiditiesModel, visit=visitObj)
+		return Response(ComorbiditiesSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+
+class RetrieveUpdateDeleteSessionComorbiditiesAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = comorbiditiesModel.objects.all()
+	serializer_class = ComorbiditiesSerializer
+
+class CreateSessionInvestigationsAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = InvestigationsSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			notesObj.visit = visitObj
+			notesObj.save()
+			return Response(InvestigationsSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionInvestigationsAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		notesObj = get_object_or_404(investigationsModel, visit=visitObj)
+		return Response(InvestigationsSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+
+class RetrieveUpdateDeleteSessionInvestigationsAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = investigationsModel.objects.all()
+	serializer_class = InvestigationsSerializer
+
+class CreateSessionDiagnosisAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = DiagnosisSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			notesObj.visit = visitObj
+			notesObj.save()
+			return Response(DiagnosisSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionDiagnosisAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		notesObj = get_object_or_404(diagnosisModel, visit=visitObj)
+		return Response(DiagnosisSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+
+class RetrieveUpdateDeleteSessionDiagnosisAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = diagnosisModel.objects.all()
+	serializer_class = DiagnosisSerializer
+
+class CreateSessionTreatmentAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = TreatmentSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			notesObj.visit = visitObj
+			notesObj.save()
+			return Response(TreatmentSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionTreatmentAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		notesObj = get_object_or_404(treatmentModel, visit=visitObj)
+		return Response(TreatmentSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+
+class RetrieveUpdateDeleteSessionTreatmentAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = treatmentModel.objects.all()
+	serializer_class = TreatmentSerializer
+
+class CreateSessionRemarksAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = RemarksSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			notesObj.visit = visitObj
+			notesObj.save()
+			return Response(RemarksSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionRemarksAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		notesObj = get_object_or_404(remarksModel, visit=visitObj)
+		return Response(RemarksSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+
+class RetrieveUpdateDeleteSessionRemarksAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = remarksModel.objects.all()
+	serializer_class = RemarksSerializer

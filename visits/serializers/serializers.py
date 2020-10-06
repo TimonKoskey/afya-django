@@ -66,19 +66,18 @@ class ComplaintsSerializer(ModelSerializer):
 			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
 		]
 
-	# def create(self, validated_data):
-	# 	newComplaints = complaintsModel(
-	# 		entry1 = validated_data['entry1'],
-	# 		entry2 = validated_data['entry2'],
-    #         entry3 = validated_data['entry3'],
-	# 		entry4 = validated_data['entry4'],
-	# 		entry5 = validated_data['entry5'],
-    #         entry6 = validated_data['entry6'],
-    #         entry7 = validated_data['entry7']
-    #     )
-	#
-	# 	newComplaints.save()
-	# 	return newComplaints
+	def create(self, validated_data):
+		newComplaints = complaintsModel(
+			entry1 = validated_data['entry1'],
+			entry2 = validated_data['entry2'],
+            entry3 = validated_data['entry3'],
+			entry4 = validated_data['entry4'],
+			entry5 = validated_data['entry5'],
+            entry6 = validated_data['entry6'],
+            entry7 = validated_data['entry7']
+        )
+
+		return newComplaints
 
 class PhysicalExamSerializer(ModelSerializer):
 
@@ -88,6 +87,19 @@ class PhysicalExamSerializer(ModelSerializer):
 			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
 		]
 
+	def create(self, validated_data):
+		newPhysicalExam = physicalExamsModel(
+			entry1 = validated_data['entry1'],
+			entry2 = validated_data['entry2'],
+            entry3 = validated_data['entry3'],
+			entry4 = validated_data['entry4'],
+			entry5 = validated_data['entry5'],
+            entry6 = validated_data['entry6'],
+            entry7 = validated_data['entry7']
+        )
+
+		return newPhysicalExam
+
 class ComorbiditiesSerializer(ModelSerializer):
 
 	class Meta:
@@ -95,6 +107,19 @@ class ComorbiditiesSerializer(ModelSerializer):
 		fields = [
 			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
 		]
+
+	def create(self, validated_data):
+		newComorbidities = comorbiditiesModel(
+			entry1 = validated_data['entry1'],
+			entry2 = validated_data['entry2'],
+            entry3 = validated_data['entry3'],
+			entry4 = validated_data['entry4'],
+			entry5 = validated_data['entry5'],
+            entry6 = validated_data['entry6'],
+            entry7 = validated_data['entry7']
+        )
+
+		return newComorbidities
 
 class InvestigationsSerializer(ModelSerializer):
 
@@ -104,6 +129,19 @@ class InvestigationsSerializer(ModelSerializer):
 			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
 		]
 
+	def create(self, validated_data):
+		newInvestigations = investigationsModel(
+			entry1 = validated_data['entry1'],
+			entry2 = validated_data['entry2'],
+            entry3 = validated_data['entry3'],
+			entry4 = validated_data['entry4'],
+			entry5 = validated_data['entry5'],
+            entry6 = validated_data['entry6'],
+            entry7 = validated_data['entry7']
+        )
+
+		return newInvestigations
+
 class DiagnosisSerializer(ModelSerializer):
 
 	class Meta:
@@ -111,6 +149,19 @@ class DiagnosisSerializer(ModelSerializer):
 		fields = [
 			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
 		]
+
+	def create(self, validated_data):
+		newDiagnosis = diagnosisModel(
+			entry1 = validated_data['entry1'],
+			entry2 = validated_data['entry2'],
+            entry3 = validated_data['entry3'],
+			entry4 = validated_data['entry4'],
+			entry5 = validated_data['entry5'],
+            entry6 = validated_data['entry6'],
+            entry7 = validated_data['entry7']
+        )
+
+		return newDiagnosis
 
 class TreatmentSerializer(ModelSerializer):
 
@@ -120,6 +171,19 @@ class TreatmentSerializer(ModelSerializer):
 			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
 		]
 
+	def create(self, validated_data):
+		newTreatment = treatmentModel(
+			entry1 = validated_data['entry1'],
+			entry2 = validated_data['entry2'],
+            entry3 = validated_data['entry3'],
+			entry4 = validated_data['entry4'],
+			entry5 = validated_data['entry5'],
+            entry6 = validated_data['entry6'],
+            entry7 = validated_data['entry7']
+        )
+
+		return newTreatment
+
 class RemarksSerializer(ModelSerializer):
 
 	class Meta:
@@ -127,6 +191,19 @@ class RemarksSerializer(ModelSerializer):
 		fields = [
 			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
 		]
+
+	def create(self, validated_data):
+		newRemarks = remarksModel(
+			entry1 = validated_data['entry1'],
+			entry2 = validated_data['entry2'],
+            entry3 = validated_data['entry3'],
+			entry4 = validated_data['entry4'],
+			entry5 = validated_data['entry5'],
+            entry6 = validated_data['entry6'],
+            entry7 = validated_data['entry7']
+        )
+
+		return newRemarks
 
 class VisitsListSerializer(ModelSerializer):
 	patient = SerializerMethodField()
