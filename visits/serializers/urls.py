@@ -32,7 +32,17 @@ from .views import (
     RetrieveUpdateDeleteSessionTreatmentAPIView,
     CreateSessionRemarksAPIView,
     GetSessionRemarksAPIView,
-    RetrieveUpdateDeleteSessionRemarksAPIView
+    RetrieveUpdateDeleteSessionRemarksAPIView,
+    GetComplaintsSuggestionsAPIView,
+    GetPhysicalExamsSuggestionsAPIView,
+    GetComorbiditiesSuggestionsAPIView,
+    GetInvestigationsSuggestionsAPIView,
+    GetDiagnosisSuggestionsAPIView,
+    GetTreatmentSuggestionsAPIView,
+    GetRemarksSuggestionsAPIView,
+    GetOpenFollowUpAppointmentsList,
+    getPreviousMergedSessionsAPIView,
+    getNextMergedSessionsAPIView
 )
 
 urlpatterns = [
@@ -68,4 +78,14 @@ urlpatterns = [
     path('remarks/create/<int:visit_pk>', CreateSessionRemarksAPIView.as_view()),
     path('remarks/details/<int:visit_pk>', GetSessionRemarksAPIView.as_view()),
     path('remarks/update/<int:pk>', RetrieveUpdateDeleteSessionRemarksAPIView.as_view()),
+    path('complaints/suggestions', GetComplaintsSuggestionsAPIView.as_view()),
+    path('phyc-exams/suggestions', GetPhysicalExamsSuggestionsAPIView.as_view()),
+    path('comorbidities/suggestions', GetComorbiditiesSuggestionsAPIView.as_view()),
+    path('investigations/suggestions', GetInvestigationsSuggestionsAPIView.as_view()),
+    path('diagnosis/suggestions', GetDiagnosisSuggestionsAPIView.as_view()),
+    path('treatment/suggestions', GetTreatmentSuggestionsAPIView.as_view()),
+    path('remarks/suggestions', GetRemarksSuggestionsAPIView.as_view()),
+    path('follow-up/open/list', GetOpenFollowUpAppointmentsList.as_view()),
+    path('merged/previous/<int:visit_pk>', getPreviousMergedSessionsAPIView.as_view()),
+    path('merged/next/<int:visit_pk>', getNextMergedSessionsAPIView.as_view()),
 ]

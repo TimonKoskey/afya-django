@@ -15,6 +15,7 @@ class CreatePatientSerializer(ModelSerializer):
 			'firstName',
 			'middleName',
             'surname',
+			'dateOfBirth',
 			'age',
 			'gender',
 			'mainPhoneNumber',
@@ -29,11 +30,11 @@ class CreatePatientSerializer(ModelSerializer):
 
 	def create(self, validated_data):
 		newPatient = patient(
-			# patientRegistrationNumber = validated_data['patientRegistrationNumber'],
+			patientRegistrationNumber = validated_data['patientRegistrationNumber'],
 			firstName = validated_data['firstName'],
 			middleName = validated_data['middleName'],
             surname = validated_data['surname'],
-			age = validated_data['age'],
+			dateOfBirth = validated_data['dateOfBirth'],
 			gender = validated_data['gender'],
 			mainPhoneNumber = validated_data['mainPhoneNumber'],
             alternativePhoneNumber = validated_data['alternativePhoneNumber'],
@@ -42,8 +43,7 @@ class CreatePatientSerializer(ModelSerializer):
 			subCounty = validated_data['subCounty'],
 			estateOrArea = validated_data['estateOrArea']
 			)
-		newPatient.save()
-
+			
 		return newPatient
 
 class PatientsListSerializer(ModelSerializer):
@@ -56,8 +56,10 @@ class PatientsListSerializer(ModelSerializer):
 			'firstName',
 			'middleName',
             'surname',
+			'dateOfBirth',
 			'age',
 			'gender',
+			'mainPhoneNumber',
             'registrationDate'
 		]
 
@@ -71,6 +73,7 @@ class RetrievePatientSerializer(ModelSerializer):
 			'firstName',
 			'middleName',
             'surname',
+			'dateOfBirth',
 			'age',
 			'gender',
 			'mainPhoneNumber',

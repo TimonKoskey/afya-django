@@ -332,8 +332,22 @@ class RetrieveVisitSerializer(ModelSerializer):
 		payments = PaymentSerializer(paymentObjs,many=True).data
 		return payments
 
-	# def update(self, instance, validated_data):
-	# 	instance.status = validated_data.get('status', instance.status)
-	# 	instance.followUpStatus = validated_data.get('followUpStatus', instance.followUpStatus)
-	#
-	# 	if ()
+class MergedSessionsSerializer(ModelSerializer):
+	previous = SerializerMethodField()
+	next = SerializerMethodField()
+
+	class Meta:
+		model = merged
+		fields = [
+			'id',
+			'previous',
+			'next'
+		]
+
+	def get_previous(self,obj):
+		previous = RetrieveVisitAPIView(obj.previous).data
+		return previous;
+
+	def get_next(self,obj):
+		next = RetrieveVisitAPIView(obj.next).data
+		return next;
