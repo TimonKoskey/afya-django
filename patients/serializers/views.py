@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.db.models import Q
 from datetime import datetime, timezone, timedelta
+from django.shortcuts import get_object_or_404
 
 from rest_framework.generics import (
 	RetrieveUpdateDestroyAPIView,
@@ -51,6 +52,36 @@ class PatientsListAPIView(ListAPIView):
 	def get_queryset(self, *args, **kwargs):
 		queryset = patient.objects.all()
 		return queryset
+
+class UpdatePatientDetailsAPIView(APIView):
+
+	def put(self, request, *args, **kwargs):
+		patientData = request.data
+		patient_pk = kwargs['patient_pk']
+		currentDate = ((datetime.now().replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+		dateOfBirth = ((datetime.strptime(patientData['dob'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+		patientData['dateOfBirth'] = dateOfBirth
+		patientDataSerializer = RetrievePatientSerializer(data=patientData)
+		patientObj = get_object_or_404(patient,pk=patient_pk)
+
+		if patientDataSerializer.is_valid():
+			newPatient = patientDataSerializer.update(patientObj,patientDataSerializer.validated_data)
+			years = currentDate.year - dateOfBirth.year
+			age = str(years) + ' years'
+			if currentDate.month < dateOfBirth.month or (currentDate.month == dateOfBirth.month and currentDate.day < dateOfBirth.day):
+				years -= 1
+				age = str(years) + ' years'
+			if years == 0:
+				years = currentDate.month - dateOfBirth.month
+				age = str(years) + ' months'
+
+			newPatient.age = age
+			newPatient.save()
+			newPatientSerializer = RetrievePatientSerializer(newPatient)
+
+			return Response(newPatientSerializer.data, status=status.HTTP_201_CREATED)
+
+		return Response(patientDataSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PatientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 	queryset = patient.objects.all()

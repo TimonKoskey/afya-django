@@ -43,7 +43,7 @@ class CreatePatientSerializer(ModelSerializer):
 			subCounty = validated_data['subCounty'],
 			estateOrArea = validated_data['estateOrArea']
 			)
-			
+
 		return newPatient
 
 class PatientsListSerializer(ModelSerializer):
@@ -85,3 +85,19 @@ class RetrievePatientSerializer(ModelSerializer):
 			'registrationDate',
 			'lastUpdated'
 		]
+
+	def update(self, instance, validated_data):
+		instance.patientRegistrationNumber = validated_data.get('patientRegistrationNumber', instance.patientRegistrationNumber)
+		instance.firstName = validated_data.get('firstName', instance.firstName)
+		instance.middleName = validated_data.get('middleName', instance.middleName)
+		instance.surname = validated_data.get('surname', instance.surname)
+		instance.dateOfBirth = validated_data.get('dateOfBirth', instance.dateOfBirth)
+		instance.gender = validated_data.get('gender', instance.gender)
+		instance.mainPhoneNumber = validated_data.get('mainPhoneNumber', instance.mainPhoneNumber)
+		instance.alternativePhoneNumber = validated_data.get('alternativePhoneNumber', instance.alternativePhoneNumber)
+		instance.email = validated_data.get('email', instance.email)
+		instance.county = validated_data.get('county', instance.county)
+		instance.subCounty = validated_data.get('subCounty', instance.subCounty)
+		instance.estateOrArea = validated_data.get('estateOrArea', instance.estateOrArea)
+
+		return instance

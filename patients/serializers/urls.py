@@ -4,7 +4,8 @@ from .views import (
 	CreatePatientAPIView,
     PatientsListAPIView,
     PatientRetrieveUpdateDestroyAPIView,
-	CheckIfPatientRecordsExistAPIView
+	CheckIfPatientRecordsExistAPIView,
+	UpdatePatientDetailsAPIView
 )
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path('add', CreatePatientAPIView.as_view()),
     path('list', PatientsListAPIView.as_view()),
     path('patient/details/<int:pk>', PatientRetrieveUpdateDestroyAPIView.as_view()),
+	path('patient/details/update/<int:patient_pk>', UpdatePatientDetailsAPIView.as_view()),
 ]
