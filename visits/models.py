@@ -154,6 +154,7 @@ class Remarks(models.Model):
         return "%s" %(self.visit)
 
 class MergedVisits(models.Model):
+    # patient = models.ForeignKey(patient, null=True, blank=True, on_delete=models.CASCADE)
     previous = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.CASCADE, related_name='previous')
     next = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.CASCADE, related_name='next')
 

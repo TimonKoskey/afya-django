@@ -345,9 +345,9 @@ class MergedSessionsSerializer(ModelSerializer):
 		]
 
 	def get_previous(self,obj):
-		previous = RetrieveVisitAPIView(obj.previous).data
+		previous = RetrieveVisitSerializer(obj.previous).data
 		return previous;
 
 	def get_next(self,obj):
-		next = RetrieveVisitAPIView(obj.next).data
+		next = RetrieveVisitSerializer(obj.next).data
 		return next;

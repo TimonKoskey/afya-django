@@ -42,7 +42,8 @@ from .views import (
     GetRemarksSuggestionsAPIView,
     GetOpenFollowUpAppointmentsList,
     getPreviousMergedSessionsAPIView,
-    getNextMergedSessionsAPIView
+    getNextMergedSessionsAPIView,
+    MergeSessionsAPIView
 )
 
 urlpatterns = [
@@ -85,7 +86,8 @@ urlpatterns = [
     path('diagnosis/suggestions', GetDiagnosisSuggestionsAPIView.as_view()),
     path('treatment/suggestions', GetTreatmentSuggestionsAPIView.as_view()),
     path('remarks/suggestions', GetRemarksSuggestionsAPIView.as_view()),
-    path('follow-up/open/list', GetOpenFollowUpAppointmentsList.as_view()),
+    path('follow-up/open/list/<int:patient_pk>', GetOpenFollowUpAppointmentsList.as_view()),
     path('merged/previous/<int:visit_pk>', getPreviousMergedSessionsAPIView.as_view()),
     path('merged/next/<int:visit_pk>', getNextMergedSessionsAPIView.as_view()),
+    path('merge', MergeSessionsAPIView.as_view()),
 ]

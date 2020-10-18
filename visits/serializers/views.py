@@ -82,8 +82,9 @@ class UpdateVisitAPIView(APIView):
 	def put(self, request, *args, **kwargs):
 		visit_pk = kwargs['visit_pk']
 		visitData = request.data
-		if visitData['followUpDate']:
-			date = ((datetime.strptime(visitData['followUpDate'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+		followUpDate = visitData.get('followUpDate', None)
+		if followUpDate != None:
+			date = ((datetime.strptime(followUpDate, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
 			visitData['followUpDate'] = date
 
 		visitSerializer = RetrieveVisitSerializer(data=visitData)
@@ -323,9 +324,15 @@ class RetrieveUpdateDeleteSessionRemarksAPIView(RetrieveUpdateDestroyAPIView):
 class GetComplaintsSuggestionsAPIView(APIView):
 
 	def get(self, request, *args, **kwargs):
-		suggestions = ['Headache', 'Visual disturbance', 'Radiculopathy - Upper Limbs', 'Radiculopathy - Lower Limbs']
-		queryString = request.GET.get('queryString')
+		suggestionsSamples = ['Headache', 'Visual disturbance', 'Radiculopathy - Upper Limbs', 'Radiculopathy - Lower Limbs']
+		suggestions = []
+		queryString = request.GET.get('queryString').lower()
 		complaintsQuerySet = complaintsModel.objects.all()
+
+		for sample in suggestionsSamples:
+			sampleLowerCase = sample.lower()
+			if queryString in sampleLowerCase and sample not in suggestions:
+				suggestions.append(sample)
 
 		if complaintsQuerySet:
 			for complaintObj in complaintsQuerySet:
@@ -427,9 +434,15 @@ class GetInvestigationsSuggestionsAPIView(APIView):
 class GetDiagnosisSuggestionsAPIView(APIView):
 
 	def get(self, request, *args, **kwargs):
-		suggestions = ['Brain tumor - Benign', 'Brain tumor - Malignant', 'Lumbar Spondylosis', 'Cervical Spondylosis']
-		queryString = request.GET.get('queryString')
+		suggestionsSamples = ['Brain tumor - Benign', 'Brain tumor - Malignant', 'Lumbar Spondylosis', 'Cervical Spondylosis']
+		suggestions = []
+		queryString = request.GET.get('queryString').lower()
 		querySet = investigationsModel.objects.all()
+
+		for sample in suggestionsSamples:
+			sampleLowerCase = sample.lower()
+			if queryString in sampleLowerCase and sample not in suggestions:
+				suggestions.append(sample)
 
 		if querySet:
 			for obj in querySet:
@@ -506,8 +519,11 @@ class GetOpenFollowUpAppointmentsList(ListAPIView):
 	serializer_class = RetrieveVisitSerializer
 
 	def get_queryset(self, *args, **kwargs):
+		patient_pk = self.kwargs['patient_pk']
 		currentDate = ((datetime.now().replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+		patientObj = get_object_or_404(patient,pk=patient_pk)
 		queryset = visitModel.objects.filter(
+			Q(patient=patientObj) &
 			Q(followUpStatus='Open') &
 			Q(followUpDate__lte=currentDate)
 		)
@@ -538,3 +554,28 @@ class getNextMergedSessionsAPIView(ListAPIView):
 			for obj in queryset:
 				visitObjsList.append(obj.next)
 		return visitObjsList
+
+class MergeSessionsAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		data = request.data
+		previousSession_pk = data['previous']['id']
+		nextSession_pk = data['next']['id']
+		previousSessionObj = get_object_or_404(visitModel,pk=previousSession_pk)
+		nextSessionObj = get_object_or_404(visitModel,pk=nextSession_pk)
+		mergedSessionsCheck = merged.objects.filter(
+			Q(previous=previousSessionObj) &
+			Q(next=nextSessionObj)
+		)
+
+		if mergedSessionsCheck:
+			previousSessionObj.followUpStatus = 'Merged'
+			previousSessionObj.save()
+			return Response(None, status=status.HTTP_200_OK)
+		else:
+			mergedSessionsObj = merged(previous=previousSessionObj,next=nextSessionObj)
+			mergedSessionsObj.save()
+			previousSessionObj.followUpStatus = 'Merged'
+			previousSessionObj.save()
+			serializer = MergedSessionsSerializer(mergedSessionsObj)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
