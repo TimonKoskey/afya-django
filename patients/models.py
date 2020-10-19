@@ -1,6 +1,5 @@
 from django.db import models
-from celery.schedules import crontab
-from celery.task import periodic_task
+from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timezone, timedelta
 
 class Patient(models.Model):
@@ -26,7 +25,7 @@ class Patient(models.Model):
 	class Meta:
 		verbose_name_plural = 'Patients'
 
-@periodic_task(run_every=crontab(hour=0, minute=0))
+
 def every_day():
 	currentDate = ((datetime.now().replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
 	patientsQueryset = Patient.objects.all();
@@ -39,5 +38,9 @@ def every_day():
 				years = currentDate.year - dateOfBirth.year
 				patientObj.age = str(years) + ' years'
 				patientObj.save()
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(every_day,'cron', hour=0, minute=5)
+sched.start()
 
 patient = Patient
