@@ -91,8 +91,13 @@ class CheckIfPatientRecordsExistAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		data = request.data
-		patientsQueryset = patient.objects.filter(
-			Q(firstName=data['firstName']) & Q(surname=data['surname']) & Q(mainPhoneNumber=data['mainPhoneNumber'])
-		)
-		serializer = PatientsListSerializer(patientsQueryset,many=True).data
-		return Response(serializer, status=status.HTTP_200_OK)
+		patientsQueryset = patient.objects.filter(patientRegistrationNumber=data['patientRegistrationNumber'])
+		if patientsQueryset:
+			serializer = PatientsListSerializer(patientsQueryset,many=True).data
+			return Response(serializer, status=status.HTTP_200_OK)
+		else:
+			patientsQueryset = patient.objects.filter(
+				Q(firstName=data['firstName']) & Q(surname=data['surname']) & Q(mainPhoneNumber=data['mainPhoneNumber'])
+			)
+			serializer = PatientsListSerializer(patientsQueryset,many=True).data
+			return Response(serializer, status=status.HTTP_200_OK)
