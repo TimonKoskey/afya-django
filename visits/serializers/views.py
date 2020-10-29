@@ -12,10 +12,11 @@ from rest_framework.generics import (
 from patients.models import patient
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged )
+    treatmentModel, remarksModel, merged, investigationRequestModel, investigationResultsModel )
 from .serializers import (
 	PaymentSerializer, VitalsEntrySerializer, VisitsListSerializer, RetrieveVisitSerializer, ComplaintsSerializer, PhysicalExamSerializer,
-	ComorbiditiesSerializer, InvestigationsSerializer, DiagnosisSerializer, TreatmentSerializer, RemarksSerializer, MergedSessionsSerializer )
+	ComorbiditiesSerializer, InvestigationsSerializer, DiagnosisSerializer, TreatmentSerializer, RemarksSerializer, MergedSessionsSerializer,
+	InvestigationRequestSerializer, InvestigationResultsSerializer )
 
 class CreateNewVisitAPIView(APIView):
 
@@ -49,7 +50,8 @@ class FollowUpVisitsAPIView(ListAPIView):
 	serializer_class = VisitsListSerializer
 
 	def get_queryset(self, *args, **kwargs):
-		currentDate = ((datetime.now().replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+		currentDate = (datetime.now().replace(tzinfo=timezone(timedelta(hours=3)))).date()
+		print(currentDate)
 		queryset = visitModel.objects.filter(
 			Q(followUpDate=currentDate)
 		)
@@ -63,9 +65,6 @@ class getVisitsByDateAPIView(ListAPIView):
 		date = datetime.strptime(dateTimeString, "%a, %d %b %Y %H:%M:%S %Z")
 		dateStart = (datetime.combine(date, datetime.min.time()).replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
 		dateEnd = (datetime.combine(date, datetime.max.time()).replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
-		print(dateStart);
-		print(dateEnd);
-
 		queryset = visitModel.objects.filter(
 			Q(date__lte=dateEnd) &
 			Q(date__gte=dateStart)
@@ -218,14 +217,31 @@ class CreateSessionInvestigationsAPIView(APIView):
 	def post(self, request, *args, **kwargs):
 		visit_pk = kwargs['visit_pk']
 		data = request.data
-		serializer = InvestigationsSerializer(data=data)
+		serializer = InvestigationRequestSerializer(data=data)
 
 		if serializer.is_valid():
 			notesObj = serializer.create(serializer.validated_data)
 			visitObj = get_object_or_404(visitModel, pk=visit_pk)
-			notesObj.visit = visitObj
+			newInvestigationObj = investigationsModel(visit=visitObj)
+			newInvestigationObj.save()
+			notesObj.investigation = newInvestigationObj
 			notesObj.save()
-			return Response(InvestigationsSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+			return Response(InvestigationsSerializer(newInvestigationObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CreateSessionInvestigationResponseAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		investigation_pk = kwargs['investigation_pk']
+		data = request.data
+		serializer = InvestigationResultsSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			investigationObj = get_object_or_404(investigationsModel, pk=investigation_pk)
+			notesObj.investigation = investigationObj
+			notesObj.save()
+			return Response(InvestigationsSerializer(investigationObj).data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetSessionInvestigationsAPIView(APIView):
@@ -236,9 +252,13 @@ class GetSessionInvestigationsAPIView(APIView):
 		notesObj = get_object_or_404(investigationsModel, visit=visitObj)
 		return Response(InvestigationsSerializer(notesObj).data, status=status.HTTP_201_CREATED)
 
-class RetrieveUpdateDeleteSessionInvestigationsAPIView(RetrieveUpdateDestroyAPIView):
-	queryset = investigationsModel.objects.all()
-	serializer_class = InvestigationsSerializer
+class RetrieveUpdateDeleteSessionInvestigationRequestAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = investigationRequestModel.objects.all()
+	serializer_class = InvestigationRequestSerializer
+
+class RetrieveUpdateDeleteSessionInvestigationResponseAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = investigationResultsModel.objects.all()
+	serializer_class = InvestigationResultsSerializer
 
 class CreateSessionDiagnosisAPIView(APIView):
 
@@ -405,28 +425,52 @@ class GetComorbiditiesSuggestionsAPIView(APIView):
 
 		return Response(suggestions, status=status.HTTP_200_OK)
 
-class GetInvestigationsSuggestionsAPIView(APIView):
+class GetInvestigationRequestSuggestionsAPIView(APIView):
 
 	def get(self, request, *args, **kwargs):
 		suggestions = []
-		queryString = request.GET.get('queryString')
-		querySet = investigationsModel.objects.all()
+		querySet = investigationRequestModel.objects.all()
 
 		if querySet:
 			for obj in querySet:
-				if queryString in obj.entry1 and obj.entry1 not in suggestions:
+				if obj.entry1 not in suggestions:
 					suggestions.append(obj.entry1)
-				if queryString in obj.entry2 and obj.entry2 not in suggestions:
+				if obj.entry2 not in suggestions:
 					suggestions.append(obj.entry2)
-				if queryString in obj.entry3 and obj.entry3 not in suggestions:
+				if obj.entry3 not in suggestions:
 					suggestions.append(obj.entry3)
-				if queryString in obj.entry4 and obj.entry4 not in suggestions:
+				if obj.entry4 not in suggestions:
 					suggestions.append(obj.entry4)
-				if queryString in obj.entry5 and obj.entry5 not in suggestions:
+				if obj.entry5 not in suggestions:
 					suggestions.append(obj.entry5)
-				if queryString in obj.entry6 and obj.entry6 not in suggestions:
+				if obj.entry6 not in suggestions:
 					suggestions.append(obj.entry6)
-				if queryString in obj.entry7 and obj.entry7 not in suggestions:
+				if obj.entry7 not in suggestions:
+					suggestions.append(obj.entry7)
+
+		return Response(suggestions, status=status.HTTP_200_OK)
+
+class GetInvestigationResultsSuggestionsAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		suggestions = []
+		querySet = investigationResultsModel.objects.all()
+
+		if querySet:
+			for obj in querySet:
+				if obj.entry1 not in suggestions:
+					suggestions.append(obj.entry1)
+				if obj.entry2 not in suggestions:
+					suggestions.append(obj.entry2)
+				if obj.entry3 not in suggestions:
+					suggestions.append(obj.entry3)
+				if obj.entry4 not in suggestions:
+					suggestions.append(obj.entry4)
+				if obj.entry5 not in suggestions:
+					suggestions.append(obj.entry5)
+				if obj.entry6 not in suggestions:
+					suggestions.append(obj.entry6)
+				if obj.entry7 not in suggestions:
 					suggestions.append(obj.entry7)
 
 		return Response(suggestions, status=status.HTTP_200_OK)
@@ -520,7 +564,9 @@ class GetOpenFollowUpAppointmentsList(ListAPIView):
 
 	def get_queryset(self, *args, **kwargs):
 		patient_pk = self.kwargs['patient_pk']
-		currentDate = ((datetime.now().replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+		currentDate = (datetime.now().replace(tzinfo=timezone(timedelta(hours=3)))).date()
+		print("open follow up date function")
+		print(currentDate)
 		patientObj = get_object_or_404(patient,pk=patient_pk)
 		queryset = visitModel.objects.filter(
 			Q(patient=patientObj) &
@@ -579,3 +625,89 @@ class MergeSessionsAPIView(APIView):
 			previousSessionObj.save()
 			serializer = MergedSessionsSerializer(mergedSessionsObj)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class GetLabResultsSessionsAPIView(ListAPIView):
+	serializer_class = VisitsListSerializer
+
+	def get_queryset(self, *args, **kwargs):
+		queryset = visitModel.objects.filter(status='Suspended')
+		return queryset
+
+class GetCashReportAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		timeRange = request.data
+		dateMinString = timeRange.get("min")
+		dateMaxString = timeRange.get("max")
+		dateMin = (datetime.strptime(dateMinString, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
+		dateMax = (datetime.strptime(dateMaxString, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
+
+		cashReport = []
+		grandTotalTally = []
+
+		queryset = visitModel.objects.filter(
+			Q(date__lte=dateMax) &
+			Q(date__gte=dateMin)
+		)
+
+		if queryset:
+			cashTotal = 0
+			invoiceTotal = 0
+			balanceTotal = 0
+			grandTotal = 0
+
+			for visitObj in queryset:
+				visitPayment = {
+					'firstName': visitObj.patient.firstName,
+					'surname': visitObj.patient.surname,
+					'consultation': 0,
+					'procedure': 0,
+					'treatment': 0,
+					'other': 0,
+					'cash': 0,
+					'invoice': 0,
+					'total': 0,
+					'balance': 0,
+					'grandTotal': 0,
+					'coop': ''
+				}
+
+				paymentQst = paymentModel.objects.filter(visit=visitObj)
+				print(paymentQst)
+				print(paymentQst)
+				if paymentQst:
+					for paymentObj in paymentQst:
+						if paymentObj.concept == "Consultation":
+							visitPayment['consultation'] += int(paymentObj.amount)
+						if paymentObj.concept == "Procedure":
+							visitPayment['procedure'] += int(paymentObj.amount)
+						if paymentObj.concept == "Treatment":
+							visitPayment['treatment'] += int(paymentObj.amount)
+						else:
+							visitPayment['other'] += int(paymentObj.amount)
+
+						if paymentObj.method == 'Cash' or paymentObj.method == 'Mpesa':
+							visitPayment['cash'] += int(paymentObj.amount)
+							cashTotal += int(paymentObj.amount)
+
+						if paymentObj.method == 'Insurance':
+							visitPayment['invoice'] += int(paymentObj.amount)
+							visitPayment['coop'] = paymentObj.companyName
+							invoiceTotal += int(paymentObj.amount)
+
+						visitPayment['balance'] += int(paymentObj.balance)
+						balanceTotal += int(paymentObj.balance)
+						visitPayment['grandTotal'] += (int(paymentObj.amount) + int(paymentObj.balance))
+						grandTotal += (int(paymentObj.amount) + int(paymentObj.balance))
+				cashReport.append(visitPayment)
+			tally = {
+				'cashTotal': cashTotal,
+				'invoiceTotal': invoiceTotal,
+				'balanceTotal': balanceTotal,
+				'grandTotal': grandTotal
+			}
+
+			grandTotalTally.append(cashReport)
+			grandTotalTally.append(tally)
+
+		return Response(grandTotalTally, status=status.HTTP_200_OK)

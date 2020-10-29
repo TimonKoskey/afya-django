@@ -27,7 +27,7 @@ class Patient(models.Model):
 
 
 def every_day():
-	currentDate = ((datetime.now().replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+	currentDate = (datetime.now().replace(tzinfo=timezone(timedelta(hours=3)))).date()
 	patientsQueryset = Patient.objects.all();
 
 	if patientsQueryset:

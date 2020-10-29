@@ -22,8 +22,10 @@ from .views import (
     GetSessionComorbiditiesAPIView,
     RetrieveUpdateDeleteSessionComorbiditiesAPIView,
     CreateSessionInvestigationsAPIView,
+    CreateSessionInvestigationResponseAPIView,
     GetSessionInvestigationsAPIView,
-    RetrieveUpdateDeleteSessionInvestigationsAPIView,
+    RetrieveUpdateDeleteSessionInvestigationRequestAPIView,
+    RetrieveUpdateDeleteSessionInvestigationResponseAPIView,
     CreateSessionDiagnosisAPIView,
     GetSessionDiagnosisAPIView,
     RetrieveUpdateDeleteSessionDiagnosisAPIView,
@@ -36,14 +38,17 @@ from .views import (
     GetComplaintsSuggestionsAPIView,
     GetPhysicalExamsSuggestionsAPIView,
     GetComorbiditiesSuggestionsAPIView,
-    GetInvestigationsSuggestionsAPIView,
+    GetInvestigationRequestSuggestionsAPIView,
+    GetInvestigationResultsSuggestionsAPIView,
     GetDiagnosisSuggestionsAPIView,
     GetTreatmentSuggestionsAPIView,
     GetRemarksSuggestionsAPIView,
     GetOpenFollowUpAppointmentsList,
     getPreviousMergedSessionsAPIView,
     getNextMergedSessionsAPIView,
-    MergeSessionsAPIView
+    MergeSessionsAPIView,
+    GetLabResultsSessionsAPIView,
+    GetCashReportAPIView
 )
 
 urlpatterns = [
@@ -68,8 +73,10 @@ urlpatterns = [
     path('comorbidities/details/<int:visit_pk>', GetSessionComorbiditiesAPIView.as_view()),
     path('comorbidities/update/<int:pk>', RetrieveUpdateDeleteSessionComorbiditiesAPIView.as_view()),
     path('investigations/create/<int:visit_pk>', CreateSessionInvestigationsAPIView.as_view()),
+    path('investigations/results/create/<int:investigation_pk>', CreateSessionInvestigationResponseAPIView.as_view()),
     path('investigations/details/<int:visit_pk>', GetSessionInvestigationsAPIView.as_view()),
-    path('investigations/update/<int:pk>', RetrieveUpdateDeleteSessionInvestigationsAPIView.as_view()),
+    path('investigations/request/update/<int:pk>', RetrieveUpdateDeleteSessionInvestigationRequestAPIView.as_view()),
+    path('investigations/results/update/<int:pk>', RetrieveUpdateDeleteSessionInvestigationResponseAPIView.as_view()),
     path('diagnosis/create/<int:visit_pk>', CreateSessionDiagnosisAPIView.as_view()),
     path('diagnosis/details/<int:visit_pk>', GetSessionDiagnosisAPIView.as_view()),
     path('diagnosis/update/<int:pk>', RetrieveUpdateDeleteSessionDiagnosisAPIView.as_view()),
@@ -82,7 +89,8 @@ urlpatterns = [
     path('complaints/suggestions', GetComplaintsSuggestionsAPIView.as_view()),
     path('phyc-exams/suggestions', GetPhysicalExamsSuggestionsAPIView.as_view()),
     path('comorbidities/suggestions', GetComorbiditiesSuggestionsAPIView.as_view()),
-    path('investigations/suggestions', GetInvestigationsSuggestionsAPIView.as_view()),
+    path('investigations/request/suggestions', GetInvestigationRequestSuggestionsAPIView.as_view()),
+    path('investigations/results/suggestions', GetInvestigationResultsSuggestionsAPIView.as_view()),
     path('diagnosis/suggestions', GetDiagnosisSuggestionsAPIView.as_view()),
     path('treatment/suggestions', GetTreatmentSuggestionsAPIView.as_view()),
     path('remarks/suggestions', GetRemarksSuggestionsAPIView.as_view()),
@@ -90,4 +98,6 @@ urlpatterns = [
     path('merged/previous/<int:visit_pk>', getPreviousMergedSessionsAPIView.as_view()),
     path('merged/next/<int:visit_pk>', getNextMergedSessionsAPIView.as_view()),
     path('merge', MergeSessionsAPIView.as_view()),
+    path('list/lab-results', GetLabResultsSessionsAPIView.as_view()),
+    path('cash-report', GetCashReportAPIView.as_view())
 ]

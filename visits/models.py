@@ -16,6 +16,7 @@ class Visit(models.Model):
 class Payment(models.Model):
     visit = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.CASCADE)
     concept = models.CharField(max_length=50, blank=True, null=True)
+    procedureName = models.CharField(max_length=50, blank=True, null=True)
     method = models.CharField(max_length=50, blank=True, null=True)
     amount = models.CharField(max_length=50, blank=True, null=True)
     balance = models.CharField(max_length=50, blank=True, null=True)
@@ -91,6 +92,15 @@ class Comorbidities(models.Model):
 
 class Investigations(models.Model):
     visit = models.OneToOneField(Visit, null=True, blank=True, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Investigations'
+
+    def __str__(self):
+        return "%s" %(self.visit)
+
+class InvestigationRequest(models.Model):
+    investigation = models.OneToOneField(Investigations, null=True, blank=True, on_delete=models.CASCADE)
     entry1 = models.CharField(max_length=150, blank=True, null=True)
     entry2 = models.CharField(max_length=150, blank=True, null=True)
     entry3 = models.CharField(max_length=150, blank=True, null=True)
@@ -98,12 +108,22 @@ class Investigations(models.Model):
     entry5 = models.CharField(max_length=150, blank=True, null=True)
     entry6 = models.CharField(max_length=150, blank=True, null=True)
     entry7 = models.CharField(max_length=150, blank=True, null=True)
+    status = models.CharField(max_length=50, blank=True, null=True)
+    date = models.DateTimeField(auto_now=False, auto_now_add=True)
+    lastUpdated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
-    class Meta:
-        verbose_name_plural = 'Investigations'
-
-    def __str__(self):
-        return "%s" %(self.visit)
+class InvestigationResults(models.Model):
+    investigation = models.OneToOneField(Investigations, null=True, blank=True, on_delete=models.CASCADE)
+    entry1 = models.CharField(max_length=150, blank=True, null=True)
+    entry2 = models.CharField(max_length=150, blank=True, null=True)
+    entry3 = models.CharField(max_length=150, blank=True, null=True)
+    entry4 = models.CharField(max_length=150, blank=True, null=True)
+    entry5 = models.CharField(max_length=150, blank=True, null=True)
+    entry6 = models.CharField(max_length=150, blank=True, null=True)
+    entry7 = models.CharField(max_length=150, blank=True, null=True)
+    status = models.CharField(max_length=50, blank=True, null=True)
+    date = models.DateTimeField(auto_now=False, auto_now_add=True)
+    lastUpdated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
 class Diagnosis(models.Model):
     visit = models.OneToOneField(Visit, null=True, blank=True, on_delete=models.CASCADE)
@@ -173,3 +193,5 @@ diagnosisModel = Diagnosis
 treatmentModel = Treatment
 remarksModel = Remarks
 merged = MergedVisits
+investigationRequestModel = InvestigationRequest
+investigationResultsModel = InvestigationResults
