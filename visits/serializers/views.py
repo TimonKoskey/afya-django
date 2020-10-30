@@ -50,7 +50,7 @@ class FollowUpVisitsAPIView(ListAPIView):
 	serializer_class = VisitsListSerializer
 
 	def get_queryset(self, *args, **kwargs):
-		currentDate = (datetime.now().replace(tzinfo=timezone(timedelta(hours=3)))).date()
+		currentDate = ((datetime.now().replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
 		print(currentDate)
 		queryset = visitModel.objects.filter(
 			Q(followUpDate=currentDate)
@@ -63,8 +63,8 @@ class getVisitsByDateAPIView(ListAPIView):
 	def get_queryset(self, *args, **kwargs):
 		dateTimeString = self.request.GET.get('dateTimeString')
 		date = datetime.strptime(dateTimeString, "%a, %d %b %Y %H:%M:%S %Z")
-		dateStart = (datetime.combine(date, datetime.min.time()).replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
-		dateEnd = (datetime.combine(date, datetime.max.time()).replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
+		dateStart = (datetime.combine(date, datetime.min.time()).replace(tzinfo=timezone.utc))+timedelta(hours=3)
+		dateEnd = (datetime.combine(date, datetime.max.time()).replace(tzinfo=timezone.utc))+timedelta(hours=3)
 		queryset = visitModel.objects.filter(
 			Q(date__lte=dateEnd) &
 			Q(date__gte=dateStart)
@@ -83,7 +83,7 @@ class UpdateVisitAPIView(APIView):
 		visitData = request.data
 		followUpDate = visitData.get('followUpDate', None)
 		if followUpDate != None:
-			date = ((datetime.strptime(followUpDate, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+			date = ((datetime.strptime(followUpDate, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
 			visitData['followUpDate'] = date
 
 		visitSerializer = RetrieveVisitSerializer(data=visitData)
@@ -481,7 +481,7 @@ class GetDiagnosisSuggestionsAPIView(APIView):
 		suggestionsSamples = ['Brain tumor - Benign', 'Brain tumor - Malignant', 'Lumbar Spondylosis', 'Cervical Spondylosis']
 		suggestions = []
 		queryString = request.GET.get('queryString').lower()
-		querySet = investigationsModel.objects.all()
+		querySet = diagnosisModel.objects.all()
 
 		for sample in suggestionsSamples:
 			sampleLowerCase = sample.lower()
@@ -639,8 +639,9 @@ class GetCashReportAPIView(APIView):
 		timeRange = request.data
 		dateMinString = timeRange.get("min")
 		dateMaxString = timeRange.get("max")
-		dateMin = (datetime.strptime(dateMinString, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
-		dateMax = (datetime.strptime(dateMaxString, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)
+		dateMin = (datetime.strptime(dateMinString, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)
+
+		dateMax = (datetime.strptime(dateMaxString, "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)
 
 		cashReport = []
 		grandTotalTally = []
@@ -673,8 +674,7 @@ class GetCashReportAPIView(APIView):
 				}
 
 				paymentQst = paymentModel.objects.filter(visit=visitObj)
-				print(paymentQst)
-				print(paymentQst)
+
 				if paymentQst:
 					for paymentObj in paymentQst:
 						if paymentObj.concept == "Consultation":

@@ -22,8 +22,8 @@ class CreatePatientAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		patientData = request.data
-		dateOfBirth = ((datetime.strptime(patientData['dob'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
-		currentDate = (datetime.now().replace(tzinfo=timezone(timedelta(hours=3)))).date()
+		dateOfBirth = ((datetime.strptime(patientData['dob'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
+		currentDate = ((datetime.now().replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
 		patientData['dateOfBirth'] = dateOfBirth
 		patientDataSerializer = CreatePatientSerializer(data=patientData)
 
@@ -58,8 +58,8 @@ class UpdatePatientDetailsAPIView(APIView):
 	def put(self, request, *args, **kwargs):
 		patientData = request.data
 		patient_pk = kwargs['patient_pk']
-		currentDate = (datetime.now().replace(tzinfo=timezone(timedelta(hours=3)))).date()
-		dateOfBirth = ((datetime.strptime(patientData['dob'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone(timedelta(hours=3))))+timedelta(days=1)).date()
+		currentDate = ((datetime.now().replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
+		dateOfBirth = ((datetime.strptime(patientData['dob'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
 		patientData['dateOfBirth'] = dateOfBirth
 		patientDataSerializer = RetrievePatientSerializer(data=patientData)
 		patientObj = get_object_or_404(patient,pk=patient_pk)
