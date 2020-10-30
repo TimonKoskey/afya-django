@@ -63,8 +63,8 @@ class getVisitsByDateAPIView(ListAPIView):
 	def get_queryset(self, *args, **kwargs):
 		dateTimeString = self.request.GET.get('dateTimeString')
 		date = datetime.strptime(dateTimeString, "%a, %d %b %Y %H:%M:%S %Z")
-		dateStart = (datetime.combine(date, datetime.min.time()).replace(tzinfo=timezone.utc))+timedelta(hours=3)
-		dateEnd = (datetime.combine(date, datetime.max.time()).replace(tzinfo=timezone.utc))+timedelta(hours=3)
+		dateStart = datetime.combine(date, datetime.min.time()).replace(tzinfo=timezone.utc)
+		dateEnd = datetime.combine(date, datetime.max.time()).replace(tzinfo=timezone.utc)
 		queryset = visitModel.objects.filter(
 			Q(date__lte=dateEnd) &
 			Q(date__gte=dateStart)
