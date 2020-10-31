@@ -206,7 +206,7 @@ class GetSessionComorbiditiesAPIView(APIView):
 		visit_pk = kwargs['visit_pk']
 		visitObj = get_object_or_404(visitModel, pk=visit_pk)
 		notesObj = get_object_or_404(comorbiditiesModel, visit=visitObj)
-		return Response(ComorbiditiesSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(ComorbiditiesSerializer(notesObj).data, status=status.HTTP_200_OK)
 
 class RetrieveUpdateDeleteSessionComorbiditiesAPIView(RetrieveUpdateDestroyAPIView):
 	queryset = comorbiditiesModel.objects.all()
@@ -711,3 +711,30 @@ class GetCashReportAPIView(APIView):
 			grandTotalTally.append(tally)
 
 		return Response(grandTotalTally, status=status.HTTP_200_OK)
+
+class CreateSessionVitalsAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		vitalsData = request.data
+		serializer = VitalsEntrySerializer(data=vitalsData)
+
+		if serializer.is_valid():
+			vitalsObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			vitalsObj.visit = visitObj
+			vitalsObj.save()
+			return Response(VitalsEntrySerializer(vitalsObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionVitalsAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		vitalsObj = get_object_or_404(vitalsModel, visit=visitObj)
+		return Response(VitalsEntrySerializer(vitalsObj).data, status=status.HTTP_200_OK)
+
+class RetrieveUpdateDeleteSessionVitalsAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = vitalsModel.objects.all()
+	serializer_class = VitalsEntrySerializer

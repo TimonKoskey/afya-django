@@ -32,7 +32,7 @@ class Vitals(models.Model):
     systolic = models.IntegerField(blank=True, null=True)
     diastolic = models.IntegerField(blank=True, null=True)
     pulseRate = models.IntegerField(blank=True, null=True)
-    temperature = models.IntegerField(blank=True, null=True)
+    temperature = models.FloatField(blank=True, null=True)
     SPO2 = models.IntegerField(blank=True, null=True)
     weight = models.IntegerField(blank=True, null=True)
 

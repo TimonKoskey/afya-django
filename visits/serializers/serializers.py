@@ -55,7 +55,6 @@ class VitalsEntrySerializer(ModelSerializer):
 			weight = validated_data['weight']
 		)
 
-		newVitals.save()
 		return newVitals
 
 class ComplaintsSerializer(ModelSerializer):

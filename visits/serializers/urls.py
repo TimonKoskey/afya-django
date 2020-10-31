@@ -48,7 +48,10 @@ from .views import (
     getNextMergedSessionsAPIView,
     MergeSessionsAPIView,
     GetLabResultsSessionsAPIView,
-    GetCashReportAPIView
+    GetCashReportAPIView,
+    CreateSessionVitalsAPIView,
+    GetSessionVitalsAPIView,
+    RetrieveUpdateDeleteSessionVitalsAPIView
 )
 
 urlpatterns = [
@@ -99,5 +102,8 @@ urlpatterns = [
     path('merged/next/<int:visit_pk>', getNextMergedSessionsAPIView.as_view()),
     path('merge', MergeSessionsAPIView.as_view()),
     path('list/lab-results', GetLabResultsSessionsAPIView.as_view()),
-    path('cash-report', GetCashReportAPIView.as_view())
+    path('cash-report', GetCashReportAPIView.as_view()),
+    path('vitals/create/<int:visit_pk>', CreateSessionVitalsAPIView.as_view()),
+    path('vitals/details/<int:visit_pk>', GetSessionVitalsAPIView.as_view()),
+    path('vitals/update/<int:pk>', RetrieveUpdateDeleteSessionVitalsAPIView.as_view())
 ]
