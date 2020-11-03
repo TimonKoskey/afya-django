@@ -3,7 +3,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timezone, timedelta
 
 class Patient(models.Model):
-	patientRegistrationNumber = models.IntegerField(blank=True, null=True)
+	patientRegistrationNumber = models.CharField(max_length=50,blank=True, null=True)
 	firstName = models.CharField(max_length=50, blank=True, null=True)
 	middleName = models.CharField(max_length=50, blank=True, null=True)
 	surname = models.CharField(max_length=50, blank=True, null=True)
