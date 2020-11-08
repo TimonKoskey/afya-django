@@ -738,3 +738,15 @@ class GetSessionVitalsAPIView(APIView):
 class RetrieveUpdateDeleteSessionVitalsAPIView(RetrieveUpdateDestroyAPIView):
 	queryset = vitalsModel.objects.all()
 	serializer_class = VitalsEntrySerializer
+
+class GetSuspendedAppointmentsList(ListAPIView):
+	serializer_class = RetrieveVisitSerializer
+
+	def get_queryset(self, *args, **kwargs):
+		patient_pk = self.kwargs['patient_pk']
+		patientObj = get_object_or_404(patient,pk=patient_pk)
+		queryset = visitModel.objects.filter(
+			Q(patient=patientObj) &
+			Q(status='Suspended')
+		)
+		return queryset
