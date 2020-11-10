@@ -679,9 +679,9 @@ class GetCashReportAPIView(APIView):
 					for paymentObj in paymentQst:
 						if paymentObj.concept == "Consultation":
 							visitPayment['consultation'] += int(paymentObj.amount)
-						if paymentObj.concept == "Procedure":
+						elif paymentObj.concept == "Procedure":
 							visitPayment['procedure'] += int(paymentObj.amount)
-						if paymentObj.concept == "Treatment":
+						elif paymentObj.concept == "Treatment":
 							visitPayment['treatment'] += int(paymentObj.amount)
 						else:
 							visitPayment['other'] += int(paymentObj.amount)
