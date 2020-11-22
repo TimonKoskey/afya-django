@@ -27,7 +27,7 @@ SECRET_KEY = 'fsi!7t&(@a5l6xa-*6$2+7_)5x!g($-@(okc2(7beaf%shufiu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = []
 
 
 # Application definition
