@@ -344,7 +344,7 @@ class RetrieveUpdateDeleteSessionRemarksAPIView(RetrieveUpdateDestroyAPIView):
 class GetComplaintsSuggestionsAPIView(APIView):
 
 	def get(self, request, *args, **kwargs):
-		suggestionsSamples = ['Headache', 'Visual disturbance', 'Radiculopathy - Upper Limbs', 'Radiculopathy - Lower Limbs']
+		suggestionsSamples = []
 		suggestions = []
 		queryString = request.GET.get('queryString').lower()
 		complaintsQuerySet = complaintsModel.objects.all()
@@ -478,7 +478,7 @@ class GetInvestigationResultsSuggestionsAPIView(APIView):
 class GetDiagnosisSuggestionsAPIView(APIView):
 
 	def get(self, request, *args, **kwargs):
-		suggestionsSamples = ['Brain tumor - Benign', 'Brain tumor - Malignant', 'Lumbar Spondylosis', 'Cervical Spondylosis']
+		suggestionsSamples = []
 		suggestions = []
 		queryString = request.GET.get('queryString').lower()
 		querySet = diagnosisModel.objects.all()
