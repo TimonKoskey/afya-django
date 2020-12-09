@@ -12,11 +12,13 @@ from rest_framework.generics import (
 from patients.models import patient
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged, investigationRequestModel, investigationResultsModel )
+    treatmentModel, remarksModel, merged, investigationRequestModel )
 from .serializers import (
 	PaymentSerializer, VitalsEntrySerializer, VisitsListSerializer, RetrieveVisitSerializer, ComplaintsSerializer, PhysicalExamSerializer,
 	ComorbiditiesSerializer, InvestigationsSerializer, DiagnosisSerializer, TreatmentSerializer, RemarksSerializer, MergedSessionsSerializer,
-	InvestigationRequestSerializer, InvestigationResultsSerializer )
+	InvestigationRequestSerializer )
+
+	# InvestigationResultsSerializer investigationResultsModel
 
 class CreateNewVisitAPIView(APIView):
 
@@ -216,33 +218,37 @@ class CreateSessionInvestigationsAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		newInvestigationObj = investigationsModel(visit=visitObj)
+		newInvestigationObj.save()
 		data = request.data
-		serializer = InvestigationRequestSerializer(data=data)
 
-		if serializer.is_valid():
-			notesObj = serializer.create(serializer.validated_data)
-			visitObj = get_object_or_404(visitModel, pk=visit_pk)
-			newInvestigationObj = investigationsModel(visit=visitObj)
-			newInvestigationObj.save()
-			notesObj.investigation = newInvestigationObj
-			notesObj.save()
-			return Response(InvestigationsSerializer(newInvestigationObj).data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		for test in data:
+			serializer = InvestigationRequestSerializer(data=test)
 
-class CreateSessionInvestigationResponseAPIView(APIView):
+			if serializer.is_valid():
+				notesObj = serializer.create(serializer.validated_data)
+				notesObj.investigation = newInvestigationObj
+				notesObj.save()
+			else:
+				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def post(self, request, *args, **kwargs):
-		investigation_pk = kwargs['investigation_pk']
-		data = request.data
-		serializer = InvestigationResultsSerializer(data=data)
+		return Response(InvestigationsSerializer(newInvestigationObj).data, status=status.HTTP_201_CREATED)
 
-		if serializer.is_valid():
-			notesObj = serializer.create(serializer.validated_data)
-			investigationObj = get_object_or_404(investigationsModel, pk=investigation_pk)
-			notesObj.investigation = investigationObj
-			notesObj.save()
-			return Response(InvestigationsSerializer(investigationObj).data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# class CreateSessionInvestigationResponseAPIView(APIView):
+#
+# 	def post(self, request, *args, **kwargs):
+# 		investigation_pk = kwargs['investigation_pk']
+# 		data = request.data
+# 		serializer = InvestigationResultsSerializer(data=data)
+#
+# 		if serializer.is_valid():
+# 			notesObj = serializer.create(serializer.validated_data)
+# 			investigationObj = get_object_or_404(investigationRequestModel, pk=investigation_pk)
+# 			notesObj.investigation = investigationObj
+# 			notesObj.save()
+# 			return Response(InvestigationsSerializer(investigationObj.investigation).data, status=status.HTTP_201_CREATED)
+# 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetSessionInvestigationsAPIView(APIView):
 
@@ -256,9 +262,9 @@ class RetrieveUpdateDeleteSessionInvestigationRequestAPIView(RetrieveUpdateDestr
 	queryset = investigationRequestModel.objects.all()
 	serializer_class = InvestigationRequestSerializer
 
-class RetrieveUpdateDeleteSessionInvestigationResponseAPIView(RetrieveUpdateDestroyAPIView):
-	queryset = investigationResultsModel.objects.all()
-	serializer_class = InvestigationResultsSerializer
+# class RetrieveUpdateDeleteSessionInvestigationResponseAPIView(RetrieveUpdateDestroyAPIView):
+# 	queryset = investigationResultsModel.objects.all()
+# 	serializer_class = InvestigationResultsSerializer
 
 class CreateSessionDiagnosisAPIView(APIView):
 
@@ -433,45 +439,20 @@ class GetInvestigationRequestSuggestionsAPIView(APIView):
 
 		if querySet:
 			for obj in querySet:
-				if obj.entry1 not in suggestions:
-					suggestions.append(obj.entry1)
-				if obj.entry2 not in suggestions:
-					suggestions.append(obj.entry2)
-				if obj.entry3 not in suggestions:
-					suggestions.append(obj.entry3)
-				if obj.entry4 not in suggestions:
-					suggestions.append(obj.entry4)
-				if obj.entry5 not in suggestions:
-					suggestions.append(obj.entry5)
-				if obj.entry6 not in suggestions:
-					suggestions.append(obj.entry6)
-				if obj.entry7 not in suggestions:
-					suggestions.append(obj.entry7)
-
+				if obj.test not in suggestions:
+					suggestions.append(obj.test)
 		return Response(suggestions, status=status.HTTP_200_OK)
 
 class GetInvestigationResultsSuggestionsAPIView(APIView):
 
 	def get(self, request, *args, **kwargs):
 		suggestions = []
-		querySet = investigationResultsModel.objects.all()
+		querySet = investigationRequestModel.objects.all()
 
 		if querySet:
 			for obj in querySet:
-				if obj.entry1 not in suggestions:
-					suggestions.append(obj.entry1)
-				if obj.entry2 not in suggestions:
-					suggestions.append(obj.entry2)
-				if obj.entry3 not in suggestions:
-					suggestions.append(obj.entry3)
-				if obj.entry4 not in suggestions:
-					suggestions.append(obj.entry4)
-				if obj.entry5 not in suggestions:
-					suggestions.append(obj.entry5)
-				if obj.entry6 not in suggestions:
-					suggestions.append(obj.entry6)
-				if obj.entry7 not in suggestions:
-					suggestions.append(obj.entry7)
+				if obj.results not in suggestions:
+					suggestions.append(obj.results)
 
 		return Response(suggestions, status=status.HTTP_200_OK)
 

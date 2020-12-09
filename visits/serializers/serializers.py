@@ -8,7 +8,8 @@ from patients.serializers.serializers import (
 )
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged, investigationRequestModel, investigationResultsModel )
+    treatmentModel, remarksModel, merged, investigationRequestModel )
+	# investigationResultsModel
 
 
 class PaymentSerializer(ModelSerializer):
@@ -120,71 +121,48 @@ class ComorbiditiesSerializer(ModelSerializer):
 
 		return newComorbidities
 
+# class InvestigationResultsSerializer(ModelSerializer):
+#
+# 	class Meta:
+# 		model = investigationResultsModel
+# 		fields = [
+# 			'id', 'test', 'results'
+# 		]
+#
+# 	def create(self, validated_data):
+# 		newInvestigationResults = investigationResultsModel(
+# 			entry1 = validated_data['test']
+#         )
+#
+# 		return newInvestigationResults
+
 class InvestigationRequestSerializer(ModelSerializer):
 
 	class Meta:
 		model = investigationRequestModel
 		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
+			'id', 'test', 'results'
 		]
 
 	def create(self, validated_data):
 		newInvestigationRequest = investigationRequestModel(
-			entry1 = validated_data.get('entry1',""),
-			entry2 = validated_data.get('entry2',""),
-            entry3 = validated_data.get('entry3',""),
-			entry4 = validated_data.get('entry4',""),
-			entry5 = validated_data.get('entry5',""),
-            entry6 = validated_data.get('entry6',""),
-            entry7 = validated_data.get('entry7',"")
+			entry1 = validated_data.get('test', '')
         )
 
 		return newInvestigationRequest
 
-class InvestigationResultsSerializer(ModelSerializer):
-
-	class Meta:
-		model = investigationResultsModel
-		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
-		]
-
-	def create(self, validated_data):
-		newInvestigationResults = investigationResultsModel(
-			entry1 = validated_data['entry1'],
-			entry2 = validated_data['entry2'],
-            entry3 = validated_data['entry3'],
-			entry4 = validated_data['entry4'],
-			entry5 = validated_data['entry5'],
-            entry6 = validated_data['entry6'],
-            entry7 = validated_data['entry7']
-        )
-
-		return newInvestigationResults
-
 class InvestigationsSerializer(ModelSerializer):
 	request = SerializerMethodField()
-	results = SerializerMethodField()
+
 
 	class Meta:
 		model = investigationsModel
-		fields = ['id', 'request', 'results']
+		fields = ['id', 'request']
 
 	def get_request(self,obj):
-		try:
-			investigationRequestObj = investigationRequestModel.objects.get(investigation=obj)
-			request = InvestigationRequestSerializer(investigationRequestObj).data
-			return request
-		except Exception as e:
-			return None
-
-	def get_results(self,obj):
-		try:
-			investigationResultsObj = investigationResultsModel.objects.get(investigation=obj)
-			results = InvestigationResultsSerializer(investigationResultsObj).data
-			return results
-		except Exception as e:
-			return None
+		investigationRequestObj = investigationRequestModel.objects.filter(investigation=obj)
+		request = InvestigationRequestSerializer(investigationRequestObj, many=True).data
+		return request
 
 
 class DiagnosisSerializer(ModelSerializer):

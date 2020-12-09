@@ -100,30 +100,19 @@ class Investigations(models.Model):
         return "%s" %(self.visit)
 
 class InvestigationRequest(models.Model):
-    investigation = models.OneToOneField(Investigations, null=True, blank=True, on_delete=models.CASCADE)
-    entry1 = models.CharField(max_length=150, blank=True, null=True)
-    entry2 = models.CharField(max_length=150, blank=True, null=True)
-    entry3 = models.CharField(max_length=150, blank=True, null=True)
-    entry4 = models.CharField(max_length=150, blank=True, null=True)
-    entry5 = models.CharField(max_length=150, blank=True, null=True)
-    entry6 = models.CharField(max_length=150, blank=True, null=True)
-    entry7 = models.CharField(max_length=150, blank=True, null=True)
+    investigation = models.ForeignKey(Investigations, null=True, blank=True, on_delete=models.CASCADE)
+    test = models.CharField(max_length=150, blank=True, null=True)
+    results = models.CharField(max_length=500, blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
     date = models.DateTimeField(auto_now=False, auto_now_add=True)
     lastUpdated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
-class InvestigationResults(models.Model):
-    investigation = models.OneToOneField(Investigations, null=True, blank=True, on_delete=models.CASCADE)
-    entry1 = models.CharField(max_length=150, blank=True, null=True)
-    entry2 = models.CharField(max_length=150, blank=True, null=True)
-    entry3 = models.CharField(max_length=150, blank=True, null=True)
-    entry4 = models.CharField(max_length=150, blank=True, null=True)
-    entry5 = models.CharField(max_length=150, blank=True, null=True)
-    entry6 = models.CharField(max_length=150, blank=True, null=True)
-    entry7 = models.CharField(max_length=150, blank=True, null=True)
-    status = models.CharField(max_length=50, blank=True, null=True)
-    date = models.DateTimeField(auto_now=False, auto_now_add=True)
-    lastUpdated = models.DateTimeField(auto_now=True, auto_now_add=False)
+# class InvestigationResults(models.Model):
+#     investigation = models.OneToOneField(InvestigationRequest, null=True, blank=True, on_delete=models.CASCADE)
+#     entry1 = models.CharField(max_length=150, blank=True, null=True)
+#     status = models.CharField(max_length=50, blank=True, null=True)
+#     date = models.DateTimeField(auto_now=False, auto_now_add=True)
+#     lastUpdated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
 class Diagnosis(models.Model):
     visit = models.OneToOneField(Visit, null=True, blank=True, on_delete=models.CASCADE)
@@ -194,4 +183,4 @@ treatmentModel = Treatment
 remarksModel = Remarks
 merged = MergedVisits
 investigationRequestModel = InvestigationRequest
-investigationResultsModel = InvestigationResults
+# investigationResultsModel = InvestigationResults
