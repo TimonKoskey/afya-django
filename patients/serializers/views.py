@@ -22,7 +22,7 @@ class CreatePatientAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		patientData = request.data
-		dateOfBirth = ((datetime.strptime(patientData['dob'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
+		dateOfBirth = ((datetime.strptime(patientData['dateOfBirth'], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
 		currentDate = ((datetime.now().replace(tzinfo=timezone.utc))+timedelta(hours=3)).date()
 		patientData['dateOfBirth'] = dateOfBirth
 		patientDataSerializer = CreatePatientSerializer(data=patientData)
@@ -97,7 +97,16 @@ class CheckIfPatientRecordsExistAPIView(APIView):
 			return Response(serializer, status=status.HTTP_200_OK)
 		else:
 			patientsQueryset = patient.objects.filter(
-				Q(firstName=data['firstName']) & Q(surname=data['surname']) & Q(mainPhoneNumber=data['mainPhoneNumber'])
+				Q(firstName=data['firstName']) & Q(lastName=data['lastName']) & Q(phoneNumber=data['phoneNumber'])
 			)
 			serializer = PatientsListSerializer(patientsQueryset,many=True).data
 			return Response(serializer, status=status.HTTP_200_OK)
+
+# class AllPatientVisitsListAPIView(ListAPIView):
+# 	serializer_class = RetrieveVisitSerializer
+#
+# 	def get_queryset(self, *args, **kwargs):
+# 		patient_pk = self.kwargs['patient_pk']
+# 		patientObj = get_object_or_404(patient, pk=patient_pk)
+# 		queryset = visitModel.objects.filter(patient=patientObj)
+# 		return queryset

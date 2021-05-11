@@ -3,14 +3,10 @@ from rest_framework.serializers import (
 )
 
 from patients.models import patient
-from patients.serializers.serializers import (
-    PatientsListSerializer, RetrievePatientSerializer
-)
+from patients.serializers.serializers import PatientsListSerializer, RetrievePatientSerializer
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged, investigationRequestModel )
-	# investigationResultsModel
-
+    treatmentModel, remarksModel, merged)
 
 class PaymentSerializer(ModelSerializer):
 
@@ -62,19 +58,11 @@ class ComplaintsSerializer(ModelSerializer):
 
 	class Meta:
 		model = complaintsModel
-		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
-		]
+		fields = ['id', 'entry']
 
 	def create(self, validated_data):
 		newComplaints = complaintsModel(
-			entry1 = validated_data['entry1'],
-			entry2 = validated_data['entry2'],
-            entry3 = validated_data['entry3'],
-			entry4 = validated_data['entry4'],
-			entry5 = validated_data['entry5'],
-            entry6 = validated_data['entry6'],
-            entry7 = validated_data['entry7']
+			entry = validated_data.get('entry', '')
         )
 
 		return newComplaints
@@ -83,19 +71,11 @@ class PhysicalExamSerializer(ModelSerializer):
 
 	class Meta:
 		model = physicalExamsModel
-		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
-		]
+		fields = ['id', 'entry']
 
 	def create(self, validated_data):
 		newPhysicalExam = physicalExamsModel(
-			entry1 = validated_data['entry1'],
-			entry2 = validated_data['entry2'],
-            entry3 = validated_data['entry3'],
-			entry4 = validated_data['entry4'],
-			entry5 = validated_data['entry5'],
-            entry6 = validated_data['entry6'],
-            entry7 = validated_data['entry7']
+			entry = validated_data.get('entry', '')
         )
 
 		return newPhysicalExam
@@ -104,84 +84,43 @@ class ComorbiditiesSerializer(ModelSerializer):
 
 	class Meta:
 		model = comorbiditiesModel
-		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
-		]
+		fields = ['id', 'entry']
 
 	def create(self, validated_data):
 		newComorbidities = comorbiditiesModel(
-			entry1 = validated_data['entry1'],
-			entry2 = validated_data['entry2'],
-            entry3 = validated_data['entry3'],
-			entry4 = validated_data['entry4'],
-			entry5 = validated_data['entry5'],
-            entry6 = validated_data['entry6'],
-            entry7 = validated_data['entry7']
+			entry = validated_data.get('entry', '')
         )
 
 		return newComorbidities
 
-# class InvestigationResultsSerializer(ModelSerializer):
-#
-# 	class Meta:
-# 		model = investigationResultsModel
-# 		fields = [
-# 			'id', 'test', 'results'
-# 		]
-#
-# 	def create(self, validated_data):
-# 		newInvestigationResults = investigationResultsModel(
-# 			entry1 = validated_data['test']
-#         )
-#
-# 		return newInvestigationResults
-
-class InvestigationRequestSerializer(ModelSerializer):
-
-	class Meta:
-		model = investigationRequestModel
-		fields = [
-			'id', 'test', 'results'
-		]
-
-	def create(self, validated_data):
-		newInvestigationRequest = investigationRequestModel(
-			entry1 = validated_data.get('test', '')
-        )
-
-		return newInvestigationRequest
-
 class InvestigationsSerializer(ModelSerializer):
-	request = SerializerMethodField()
-
 
 	class Meta:
 		model = investigationsModel
-		fields = ['id', 'request']
+		fields = [
+			'id',
+			'test',
+			'results',
+			'date',
+			'lastUpdated'
+		]
 
-	def get_request(self,obj):
-		investigationRequestObj = investigationRequestModel.objects.filter(investigation=obj)
-		request = InvestigationRequestSerializer(investigationRequestObj, many=True).data
-		return request
+	def create(self, validated_data):
+		newInvestigationObj = investigationsModel(
+			test = validated_data.get('test', '')
+        )
 
+		return newInvestigationObj
 
 class DiagnosisSerializer(ModelSerializer):
 
 	class Meta:
 		model = diagnosisModel
-		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
-		]
+		fields = ['id', 'entry']
 
 	def create(self, validated_data):
 		newDiagnosis = diagnosisModel(
-			entry1 = validated_data['entry1'],
-			entry2 = validated_data['entry2'],
-            entry3 = validated_data['entry3'],
-			entry4 = validated_data['entry4'],
-			entry5 = validated_data['entry5'],
-            entry6 = validated_data['entry6'],
-            entry7 = validated_data['entry7']
+			entry = validated_data.get('entry', '')
         )
 
 		return newDiagnosis
@@ -190,19 +129,11 @@ class TreatmentSerializer(ModelSerializer):
 
 	class Meta:
 		model = treatmentModel
-		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
-		]
+		fields = ['id', 'entry']
 
 	def create(self, validated_data):
 		newTreatment = treatmentModel(
-			entry1 = validated_data['entry1'],
-			entry2 = validated_data['entry2'],
-            entry3 = validated_data['entry3'],
-			entry4 = validated_data['entry4'],
-			entry5 = validated_data['entry5'],
-            entry6 = validated_data['entry6'],
-            entry7 = validated_data['entry7']
+			entry = validated_data.get('entry', '')
         )
 
 		return newTreatment
@@ -211,19 +142,11 @@ class RemarksSerializer(ModelSerializer):
 
 	class Meta:
 		model = remarksModel
-		fields = [
-			'id', 'entry1', 'entry2', 'entry3', 'entry4', 'entry5', 'entry6', 'entry7'
-		]
+		fields = ['id', 'entry']
 
 	def create(self, validated_data):
 		newRemarks = remarksModel(
-			entry1 = validated_data['entry1'],
-			entry2 = validated_data['entry2'],
-            entry3 = validated_data['entry3'],
-			entry4 = validated_data['entry4'],
-			entry5 = validated_data['entry5'],
-            entry6 = validated_data['entry6'],
-            entry7 = validated_data['entry7']
+			entry = validated_data.get('entry', '')
         )
 
 		return newRemarks
@@ -261,6 +184,7 @@ class RetrieveVisitSerializer(ModelSerializer):
 		fields = [
 			'id',
             'patient',
+			'status',
             'vitals',
             'complaints',
             'physicalExams',
@@ -269,11 +193,8 @@ class RetrieveVisitSerializer(ModelSerializer):
             'diagnosis',
             'treatment',
             'remarks',
-			'status',
 			'date',
 			'lastUpdated',
-            'followUpStatus',
-            'followUpDate',
             'payments'
 		]
 
@@ -283,24 +204,24 @@ class RetrieveVisitSerializer(ModelSerializer):
 
 	def get_vitals(self,obj):
 		try:
-			vitalsObj = vitalsModel.objects.get(visit=obj)
-			vitals = VitalsEntrySerializer(vitalsObj).data
+			vitalsObj = vitalsModel.objects.filter(visit=obj)
+			vitals = VitalsEntrySerializer(vitalsObj,many=True).data
 			return vitals
 		except Exception as e:
 			return None
 
 	def get_complaints(self,obj):
 		try:
-			complaintsObj = complaintsModel.objects.get(visit=obj)
-			complaints = ComplaintsSerializer(complaintsObj).data
+			complaintsObj = complaintsModel.objects.filter(visit=obj)
+			complaints = ComplaintsSerializer(complaintsObj,many=True).data
 			return complaints
 		except Exception as e:
 			return None
 
 	def get_physicalExams(self,obj):
 		try:
-			physicalExamsObj = physicalExamsModel.objects.get(visit=obj)
-			physicalExams = PhysicalExamSerializer(physicalExamsObj).data
+			physicalExamsObj = physicalExamsModel.objects.filter(visit=obj)
+			physicalExams = PhysicalExamSerializer(physicalExamsObj,many=True).data
 			return physicalExams
 		except Exception as e:
 			return None
@@ -308,8 +229,8 @@ class RetrieveVisitSerializer(ModelSerializer):
 	def get_comorbidities(self,obj):
 
 		try:
-			comorbiditiesObj = complaintsModel.objects.get(visit=obj)
-			comorbidities = ComorbiditiesSerializer(comorbiditiesObj).data
+			comorbiditiesObj = comorbiditiesModel.objects.filter(visit=obj)
+			comorbidities = ComorbiditiesSerializer(comorbiditiesObj,many=True).data
 			return comorbidities
 		except Exception as e:
 			return None
@@ -317,8 +238,8 @@ class RetrieveVisitSerializer(ModelSerializer):
 	def get_investigations(self,obj):
 
 		try:
-			investigationsObj = investigationsModel.objects.get(visit=obj)
-			investigations = InvestigationsSerializer(investigationsObj).data
+			investigationsObjs = investigationsModel.objects.filter(visit=obj)
+			investigations = InvestigationsSerializer(investigationsObjs,many=True).data
 			return investigations
 		except Exception as e:
 			return None
@@ -326,8 +247,8 @@ class RetrieveVisitSerializer(ModelSerializer):
 	def get_diagnosis(self,obj):
 
 		try:
-			diagnosisObj = diagnosisModel.objects.get(visit=obj)
-			diagnosis = DiagnosisSerializer(diagnosisObj).data
+			diagnosisObj = diagnosisModel.objects.filter(visit=obj)
+			diagnosis = DiagnosisSerializer(diagnosisObj,many=True).data
 			return diagnosis
 		except Exception as e:
 			return None
@@ -335,8 +256,8 @@ class RetrieveVisitSerializer(ModelSerializer):
 	def get_treatment(self,obj):
 
 		try:
-			treatmentObj = treatmentModel.objects.get(visit=obj)
-			treatment = TreatmentSerializer(treatmentObj).data
+			treatmentObj = treatmentModel.objects.filter(visit=obj)
+			treatment = TreatmentSerializer(treatmentObj,many=True).data
 			return treatment
 		except Exception as e:
 			return None
@@ -345,7 +266,7 @@ class RetrieveVisitSerializer(ModelSerializer):
 
 		try:
 			remarksObj = remarksModel.objects.get(visit=obj)
-			remarks = RemarksSerializer(remarksObj).data
+			remarks = RemarksSerializer(remarksObj,many=True).data
 			return remarks
 		except Exception as e:
 			return None

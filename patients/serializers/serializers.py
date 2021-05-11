@@ -4,6 +4,8 @@ from rest_framework.serializers import (
 )
 
 from patients.models import patient
+# from visits.serializers.serializers import RetrieveVisitSerializer
+# from visits.models import visitModel
 
 class CreatePatientSerializer(ModelSerializer):
 
@@ -13,17 +15,12 @@ class CreatePatientSerializer(ModelSerializer):
 			'id',
 			'patientRegistrationNumber',
 			'firstName',
-			'middleName',
-            'surname',
+			'lastName',
 			'dateOfBirth',
 			'age',
 			'gender',
-			'mainPhoneNumber',
-            'alternativePhoneNumber',
-			'email',
-			'county',
-			'subCounty',
-			'estateOrArea',
+			'phoneNumber',
+			'residence',
 			'registrationDate',
 			'lastUpdated'
 		]
@@ -32,16 +29,11 @@ class CreatePatientSerializer(ModelSerializer):
 		newPatient = patient(
 			patientRegistrationNumber = validated_data['patientRegistrationNumber'],
 			firstName = validated_data['firstName'],
-			middleName = validated_data['middleName'],
-            surname = validated_data['surname'],
+			lastName = validated_data['lastName'],
 			dateOfBirth = validated_data['dateOfBirth'],
 			gender = validated_data['gender'],
-			mainPhoneNumber = validated_data['mainPhoneNumber'],
-            alternativePhoneNumber = validated_data['alternativePhoneNumber'],
-			email = validated_data['email'],
-			county = validated_data['county'],
-			subCounty = validated_data['subCounty'],
-			estateOrArea = validated_data['estateOrArea']
+			phoneNumber = validated_data['phoneNumber'],
+			residence = validated_data['residence']
 			)
 
 		return newPatient
@@ -54,13 +46,12 @@ class PatientsListSerializer(ModelSerializer):
 			'id',
 			'patientRegistrationNumber',
 			'firstName',
-			'middleName',
-            'surname',
+			'lastName',
 			'dateOfBirth',
 			'age',
 			'gender',
-			'mainPhoneNumber',
-            'registrationDate'
+			'phoneNumber',
+			'residence'
 		]
 
 class RetrievePatientSerializer(ModelSerializer):
@@ -71,17 +62,12 @@ class RetrievePatientSerializer(ModelSerializer):
 			'id',
 			'patientRegistrationNumber',
 			'firstName',
-			'middleName',
-            'surname',
+			'lastName',
 			'dateOfBirth',
 			'age',
 			'gender',
-			'mainPhoneNumber',
-            'alternativePhoneNumber',
-			'email',
-			'county',
-			'subCounty',
-			'estateOrArea',
+			'phoneNumber',
+			'residence',
 			'registrationDate',
 			'lastUpdated'
 		]
@@ -89,15 +75,15 @@ class RetrievePatientSerializer(ModelSerializer):
 	def update(self, instance, validated_data):
 		instance.patientRegistrationNumber = validated_data.get('patientRegistrationNumber', instance.patientRegistrationNumber)
 		instance.firstName = validated_data.get('firstName', instance.firstName)
-		instance.middleName = validated_data.get('middleName', instance.middleName)
-		instance.surname = validated_data.get('surname', instance.surname)
+		instance.lastName = validated_data.get('lastName', instance.lastName)
 		instance.dateOfBirth = validated_data.get('dateOfBirth', instance.dateOfBirth)
 		instance.gender = validated_data.get('gender', instance.gender)
-		instance.mainPhoneNumber = validated_data.get('mainPhoneNumber', instance.mainPhoneNumber)
-		instance.alternativePhoneNumber = validated_data.get('alternativePhoneNumber', instance.alternativePhoneNumber)
-		instance.email = validated_data.get('email', instance.email)
-		instance.county = validated_data.get('county', instance.county)
-		instance.subCounty = validated_data.get('subCounty', instance.subCounty)
-		instance.estateOrArea = validated_data.get('estateOrArea', instance.estateOrArea)
+		instance.phoneNumber = validated_data.get('phoneNumber', instance.phoneNumber)
+		instance.residence = validated_data.get('residence', instance.residence)
 
 		return instance
+
+	# def get_visits(self,obj):
+	# 	visitsQueryset = visitModel.objects.filter(patient=obj)
+	# 	visits = RetrieveVisitSerializer(visitsQueryset,many=True).data
+	# 	return visits
