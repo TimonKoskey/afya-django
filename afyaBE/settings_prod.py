@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'fsi!7t&(@a5l6xa-*6$2+7_)5x!g($-@(okc2(7beaf%shufiu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['backend.ngoitsihosp.co.ke', '35.225.95.107']
 
