@@ -15,7 +15,7 @@ class Patient(models.Model):
 	lastUpdated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
 	def __str__(self):
-		return "%s %s" %(self.firstName, self.lastName)
+		return "%s %s" %(self.firstName, self.lastname)
 
 	class Meta:
 		verbose_name_plural = 'Patients'
