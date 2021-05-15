@@ -15,7 +15,7 @@ class CreatePatientSerializer(ModelSerializer):
 			'id',
 			'patientRegistrationNumber',
 			'firstName',
-			'lastName',
+			'lastname',
 			'dateOfBirth',
 			'age',
 			'gender',
@@ -29,7 +29,7 @@ class CreatePatientSerializer(ModelSerializer):
 		newPatient = patient(
 			patientRegistrationNumber = validated_data['patientRegistrationNumber'],
 			firstName = validated_data['firstName'],
-			lastName = validated_data['lastName'],
+			lastname = validated_data['lastName'],
 			dateOfBirth = validated_data['dateOfBirth'],
 			gender = validated_data['gender'],
 			phoneNumber = validated_data['phoneNumber'],
@@ -46,7 +46,7 @@ class PatientsListSerializer(ModelSerializer):
 			'id',
 			'patientRegistrationNumber',
 			'firstName',
-			'lastName',
+			'lastname',
 			'dateOfBirth',
 			'age',
 			'gender',
@@ -62,7 +62,7 @@ class RetrievePatientSerializer(ModelSerializer):
 			'id',
 			'patientRegistrationNumber',
 			'firstName',
-			'lastName',
+			'lastname',
 			'dateOfBirth',
 			'age',
 			'gender',
@@ -75,7 +75,7 @@ class RetrievePatientSerializer(ModelSerializer):
 	def update(self, instance, validated_data):
 		instance.patientRegistrationNumber = validated_data.get('patientRegistrationNumber', instance.patientRegistrationNumber)
 		instance.firstName = validated_data.get('firstName', instance.firstName)
-		instance.lastName = validated_data.get('lastName', instance.lastName)
+		instance.lastname = validated_data.get('lastName', instance.lastName)
 		instance.dateOfBirth = validated_data.get('dateOfBirth', instance.dateOfBirth)
 		instance.gender = validated_data.get('gender', instance.gender)
 		instance.phoneNumber = validated_data.get('phoneNumber', instance.phoneNumber)
