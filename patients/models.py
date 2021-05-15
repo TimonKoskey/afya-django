@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 class Patient(models.Model):
 	patientRegistrationNumber = models.CharField(max_length=50,blank=True, null=True)
 	firstName = models.CharField(max_length=50, blank=True, null=True)
-	lastName = models.CharField(max_length=50, blank=True, null=True)
+	lastname = models.CharField(max_length=50, blank=True, null=True)
 	dateOfBirth = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
 	age = models.CharField(max_length=50, blank=True, null=True)
 	gender = models.CharField(max_length=50, blank=True, null=True)
