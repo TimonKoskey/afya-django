@@ -75,7 +75,7 @@ class Comorbidities(models.Model):
     def __str__(self):
         return "%s" %(self.visit)
 
-class Investigation(models.Model):
+class Investigations(models.Model):
     visit = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.CASCADE)
     test = models.CharField(max_length=150, blank=True, null=True)
     results = models.CharField(max_length=500, blank=True, null=True)
@@ -134,7 +134,7 @@ vitalsModel = Vitals
 complaintsModel = Complaints
 physicalExamsModel = PhysicalExams
 comorbiditiesModel = Comorbidities
-investigationsModel = Investigation
+investigationsModel = Investigations
 diagnosisModel = Diagnosis
 treatmentModel = Treatment
 remarksModel = Remarks
