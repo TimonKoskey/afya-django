@@ -6,7 +6,7 @@ from patients.models import patient
 from patients.serializers.serializers import PatientsListSerializer, RetrievePatientSerializer
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged)
+    treatmentModel, remarksModel, merged, appointmentModel)
 
 class PaymentSerializer(ModelSerializer):
 
@@ -295,3 +295,20 @@ class MergedSessionsSerializer(ModelSerializer):
 	def get_next(self,obj):
 		next = RetrieveVisitSerializer(obj.next).data
 		return next;
+
+class AppointmentSerializer(ModelSerializer):
+	patient = SerializerMethodField()
+
+	class Meta:
+		model = appointmentModel
+		fields = [
+			'id',
+            'patient',
+			'status',
+			'appointmentDate',
+			'date'
+		]
+
+	def get_patient(self,obj):
+		patient = RetrievePatientSerializer(obj.patient).data
+		return patient

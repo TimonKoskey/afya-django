@@ -126,6 +126,15 @@ class MergedVisits(models.Model):
     class Meta:
         verbose_name_plural = 'Merged Visits'
 
+class Appointment(models.Model):
+    patient = models.ForeignKey(patient, null=True, blank=True, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=False, auto_now_add=True)
+    appointmentDate = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    status = models.CharField(max_length=150, blank=True, null=True)
+
+    def __str__(self):
+        return "%s" %(self.patient)
+
 
 
 visitModel = Visit
@@ -139,4 +148,5 @@ diagnosisModel = Diagnosis
 treatmentModel = Treatment
 remarksModel = Remarks
 merged = MergedVisits
+appointmentModel = Appointment
 # investigationRequestModel = InvestigationRequest

@@ -12,11 +12,12 @@ from rest_framework.generics import (
 from patients.models import patient
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged
+    treatmentModel, remarksModel, merged, appointmentModel
 )
 from .serializers import (
 	PaymentSerializer, VitalsEntrySerializer, VisitsListSerializer, RetrieveVisitSerializer, ComplaintsSerializer, PhysicalExamSerializer,
-	ComorbiditiesSerializer, InvestigationsSerializer, DiagnosisSerializer, TreatmentSerializer, RemarksSerializer, MergedSessionsSerializer
+	ComorbiditiesSerializer, InvestigationsSerializer, DiagnosisSerializer, TreatmentSerializer, RemarksSerializer, MergedSessionsSerializer,
+	AppointmentSerializer
 )
 
 class CreateNewVisitAPIView(APIView):
@@ -620,3 +621,13 @@ class GetSuspendedAppointmentsList(ListAPIView):
 			Q(status='Suspended')
 		)
 		return queryset
+
+class CreateAppointmentAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		patient_pk = kwargs['patient_pk']
+		patientObj = get_object_or_404(patient,pk=patient_pk)
+		appointmentDate = (datetime.strptime(request.data["dateString"], "%a, %d %b %Y %H:%M:%S %Z").replace(tzinfo=timezone.utc))+timedelta(hours=3)
+		appointmentObj = appointmentModel(patient=patientObj, appointmentDate=appointmentDate)
+		appointmentObj.save()
+		return Response(AppointmentSerializer(appointmentObj).data, status=status.HTTP_201_CREATED)

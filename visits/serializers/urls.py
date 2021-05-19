@@ -49,7 +49,8 @@ from .views import (
     GetSessionVitalsAPIView,
     RetrieveUpdateDeleteSessionVitalsAPIView,
     GetSuspendedAppointmentsList,
-    RetrieveLastPatientVisitsAPIView
+    RetrieveLastPatientVisitsAPIView,
+    CreateAppointmentAPIView
 )
 
 urlpatterns = [
@@ -102,5 +103,6 @@ urlpatterns = [
     path('vitals/create/<int:visit_pk>', CreateSessionVitalsAPIView.as_view()),
     path('vitals/details/<int:visit_pk>', GetSessionVitalsAPIView.as_view()),
     path('vitals/update/<int:pk>', RetrieveUpdateDeleteSessionVitalsAPIView.as_view()),
-    path('patient/visits/suspended/<int:patient_pk>', GetSuspendedAppointmentsList.as_view())
+    path('patient/visits/suspended/<int:patient_pk>', GetSuspendedAppointmentsList.as_view()),
+    path('appointment/create/<int:patient_pk>', CreateAppointmentAPIView.as_view())
 ]
