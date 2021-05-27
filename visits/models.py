@@ -119,6 +119,16 @@ class Remarks(models.Model):
     def __str__(self):
         return "%s" %(self.visit)
 
+class Prescription(models.Model):
+    visit = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.CASCADE)
+    entry = models.CharField(max_length=150, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Prescription'
+
+    def __str__(self):
+        return "%s" %(self.visit)
+
 class MergedVisits(models.Model):
     previous = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.CASCADE, related_name='previous')
     next = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.CASCADE, related_name='next')
@@ -146,6 +156,7 @@ comorbiditiesModel = Comorbidities
 investigationsModel = Investigations
 diagnosisModel = Diagnosis
 treatmentModel = Treatment
+prescriptionModel = Prescription
 remarksModel = Remarks
 merged = MergedVisits
 appointmentModel = Appointment

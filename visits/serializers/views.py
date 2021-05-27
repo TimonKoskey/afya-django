@@ -12,12 +12,12 @@ from rest_framework.generics import (
 from patients.models import patient
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged, appointmentModel
+    treatmentModel, remarksModel, merged, appointmentModel,prescriptionModel
 )
 from .serializers import (
 	PaymentSerializer, VitalsEntrySerializer, VisitsListSerializer, RetrieveVisitSerializer, ComplaintsSerializer, PhysicalExamSerializer,
 	ComorbiditiesSerializer, InvestigationsSerializer, DiagnosisSerializer, TreatmentSerializer, RemarksSerializer, MergedSessionsSerializer,
-	AppointmentSerializer
+	AppointmentSerializer, PrescriptionSerializer
 )
 
 class CreateNewVisitAPIView(APIView):
@@ -32,6 +32,14 @@ class CreateNewVisitAPIView(APIView):
 
         return Response(newVisitSerializer.data, status=status.HTTP_201_CREATED)
 
+class PatientAllVisitsAPIView(ListAPIView):
+	serializer_class = VisitsListSerializer
+
+	def get_queryset(self, *args, **kwargs):
+		patient_pk = self.kwargs['patient_pk']
+		patientObj = get_object_or_404(patient, pk=patient_pk)
+		queryset = visitModel.objects.filter(patient=patientObj)
+		return queryset
 
 class ActiveVisitsListAPIView(ListAPIView):
 	serializer_class = VisitsListSerializer
@@ -313,6 +321,33 @@ class RetrieveUpdateDeleteSessionTreatmentAPIView(RetrieveUpdateDestroyAPIView):
 	queryset = treatmentModel.objects.all()
 	serializer_class = TreatmentSerializer
 
+class CreateSessionPrescriptionAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		data = request.data
+		serializer = PrescriptionSerializer(data=data)
+
+		if serializer.is_valid():
+			notesObj = serializer.create(serializer.validated_data)
+			visitObj = get_object_or_404(visitModel, pk=visit_pk)
+			notesObj.visit = visitObj
+			notesObj.save()
+			return Response(PrescriptionSerializer(notesObj).data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetSessionPrescriptionAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		visit_pk = kwargs['visit_pk']
+		visitObj = get_object_or_404(visitModel, pk=visit_pk)
+		notesObjs = prescriptionModel.objects.filter(visit=visitObj)
+		return Response(PrescriptionSerializer(notesObjs,many=True).data, status=status.HTTP_201_CREATED)
+
+class RetrieveUpdateDeleteSessionPrescriptionAPIView(RetrieveUpdateDestroyAPIView):
+	queryset = prescriptionModel.objects.all()
+	serializer_class = PrescriptionSerializer
+
 class CreateSessionRemarksAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
@@ -422,6 +457,19 @@ class GetTreatmentSuggestionsAPIView(APIView):
 	def get(self, request, *args, **kwargs):
 		suggestions = []
 		querySet = treatmentModel.objects.all()
+
+		if querySet:
+			for obj in querySet:
+				if obj.entry not in suggestions:
+					suggestions.append(obj.entry)
+
+		return Response(suggestions, status=status.HTTP_200_OK)
+
+class GetPrescriptionSuggestionsAPIView(APIView):
+
+	def get(self, request, *args, **kwargs):
+		suggestions = []
+		querySet = prescriptionModel.objects.all()
 
 		if querySet:
 			for obj in querySet:

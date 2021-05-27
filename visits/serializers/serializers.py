@@ -6,7 +6,7 @@ from patients.models import patient
 from patients.serializers.serializers import PatientsListSerializer, RetrievePatientSerializer
 
 from visits.models import ( visitModel, paymentModel, vitalsModel, complaintsModel, physicalExamsModel, comorbiditiesModel, investigationsModel, diagnosisModel,
-    treatmentModel, remarksModel, merged, appointmentModel)
+    treatmentModel, remarksModel, merged, appointmentModel, prescriptionModel)
 
 class PaymentSerializer(ModelSerializer):
 
@@ -138,6 +138,19 @@ class TreatmentSerializer(ModelSerializer):
 
 		return newTreatment
 
+class PrescriptionSerializer(ModelSerializer):
+
+	class Meta:
+		model = prescriptionModel
+		fields = ['id', 'entry']
+
+	def create(self, validated_data):
+		newPrescription = prescriptionModel(
+			entry = validated_data.get('entry', '')
+        )
+
+		return newPrescription
+
 class RemarksSerializer(ModelSerializer):
 
 	class Meta:
@@ -176,6 +189,7 @@ class RetrieveVisitSerializer(ModelSerializer):
 	investigations = SerializerMethodField()
 	diagnosis = SerializerMethodField()
 	treatment = SerializerMethodField()
+	prescription = SerializerMethodField()
 	remarks = SerializerMethodField()
 	payments = SerializerMethodField()
 
@@ -192,6 +206,7 @@ class RetrieveVisitSerializer(ModelSerializer):
             'investigations',
             'diagnosis',
             'treatment',
+			'prescription',
             'remarks',
 			'date',
 			'lastUpdated',
@@ -261,6 +276,11 @@ class RetrieveVisitSerializer(ModelSerializer):
 			return treatment
 		except Exception as e:
 			return None
+
+	def get_prescription(self,obj):
+		prescriptionObj = prescriptionModel.objects.filter(visit=obj)
+		prescription = PrescriptionSerializer(prescriptionObj,many=True).data
+		return prescription
 
 	def get_remarks(self,obj):
 
