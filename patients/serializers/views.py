@@ -66,14 +66,13 @@ class UpdatePatientDetailsAPIView(APIView):
 
 		if patientDataSerializer.is_valid():
 			newPatient = patientDataSerializer.update(patientObj,patientDataSerializer.validated_data)
-			print(newPatient.dateOfBirth.month)
 			years = currentDate.year - dateOfBirth.year
 			age = str(years) + ' years'
 			if currentDate.month < dateOfBirth.month or (currentDate.month == dateOfBirth.month and currentDate.day < dateOfBirth.day):
 				years -= 1
 				age = str(years) + ' years'
 			if years == 0:
-				years = dateOfBirth.month - currentDate.month
+				years = 12 - (dateOfBirth.month - currentDate.month)
 				age = str(years) + ' months'
 
 			newPatient.age = age
