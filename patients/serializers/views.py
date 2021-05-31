@@ -35,7 +35,7 @@ class CreatePatientAPIView(APIView):
 				years -= 1
 				age = str(years) + ' years'
 			if years == 0:
-				years = dateOfBirth.month - currentDate.month
+				years = years = 12 - (dateOfBirth.month - currentDate.month)
 				age = str(years) + ' months'
 
 			newPatient.age = age

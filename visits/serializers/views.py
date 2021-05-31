@@ -242,8 +242,6 @@ class CreateSessionInvestigationsAPIView(APIView):
 		for test in data:
 			serializer = InvestigationsSerializer(data=test)
 
-			print(test)
-
 			if serializer.is_valid():
 				investigationObj = serializer.create(serializer.validated_data)
 				investigationObj.visit = visitObj
